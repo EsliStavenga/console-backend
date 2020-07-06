@@ -1,0 +1,15 @@
+overblog_graphql:
+    definitions:
+        schema:
+            query: RootQuery
+            mutation: RootMutation
+        mappings:
+            types:
+                -
+                    type: annotation
+                    dir: "%kernel.project_dir%/src/GraphQL"
+                    suffix: ~
+                -
+                    type: annotation
+                    dir: "%kernel.project_dir%/src/Entity"
+                    suffix: ~
