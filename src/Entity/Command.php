@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Overblog\GraphQLBundle\Annotation as GQL;
 use App\Repository\CommandRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,71 +12,81 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=CommandRepository::class)
  * @GQL\Type
  */
-class Command extends BaseEntity
+class Command extends BaseEntity implements ICommand
 {
 
-    /**
-     * @ORM\Column(type="string", length=255)
-     * @GQL\Field(type="String!")
-     */
-    private string $name;
-
-    /**
-     * @ORM\OneToOne(targetEntity="Response", mappedBy="command")
-     * @GQL\Field(type="Response!")
-     */
-    private Response $response;
-
-
-    /**
-     *
-     * @ORM\OneToMany(targetEntity="Part", mappedBy="executeOnClick")
-     * @var ArrayCollection All the parts that will execute this command on click
-     */
-    private ArrayCollection $parts;
-
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
-    }
-
-    public function getResponse(): ?Response
-    {
-        return $this->response;
-    }
-
-    public function setResponse(Response $response): self
-    {
-        $this->response = $response;
-
-        return $this;
-    }
+	/**
+	 * @ORM\Column(type="string", length=255, unique=true)
+	 * @GQL\Field(type="String!")
+	 */
+	private string $name;
 
 	/**
-	 * @return ArrayCollection
+	 * @var String[]
 	 */
-	public function getParts(): ArrayCollection
+	private array $args;
+
+	/**
+	 * @ORM\OneToMany(targetEntity=Response::class, mappedBy="command", orphanRemoval=true, cascade={"persist"})
+	 * @var Response[]
+	 */
+	private Collection $responses;
+
+	public function __construct()
 	{
-		return $this->parts;
+		$this->responses = new ArrayCollection();
+	}
+
+	public function getName(): ?string
+	{
+		return $this->name;
+	}
+
+	public function setName(string $name): self
+	{
+		$this->name = $name;
+
+		return $this;
+	}
+
+	public function getResponse(): Response
+	{
+		return $this->responses->get(0);
+	}
+
+	public function setArgs(array $args)
+	{
+		$this->args = $args;
 	}
 
 	/**
-	 * @param ArrayCollection $parts
+	 * @return Collection|Response[]
 	 */
-	public function setParts(ArrayCollection $parts): void
+	public function getResponses(): Collection
 	{
-		$this->parts = $parts;
+		return $this->responses;
+	}
+
+	public function addResponse(Response $response): self
+	{
+		if (!$this->responses->contains($response)) {
+			$this->responses[] = $response;
+			$response->setCommand($this);
+		}
+
+		return $this;
+	}
+
+	public function removeResponse(Response $response): self
+	{
+		if ($this->responses->contains($response)) {
+			$this->responses->removeElement($response);
+			// set the owning side to null (unless already changed)
+			if ($response->getCommand() === $this) {
+				$response->setCommand(null);
+			}
+		}
+
+		return $this;
 	}
 }

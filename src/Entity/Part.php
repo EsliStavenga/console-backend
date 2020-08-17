@@ -30,7 +30,7 @@ class Part extends BaseEntity
 	private string $content;
 
 	/**
-	 * @ORM\Column(name="foreground_color", type="string", nullable=false)
+	 * @ORM\Column(name="foreground_color", type="string", nullable=false, length=6)
 	 * @GQL\Field(type="String")
 	 * @var string A hex string representation of the foreground color
 	 */
@@ -45,6 +45,12 @@ class Part extends BaseEntity
 	private ?Command $executeOnClick;
 
 	/**
+	 * @ORM\ManyToOne(targetEntity=Line::class, inversedBy="parts")
+	 * @ORM\JoinColumn(nullable=false)
+	 */
+	private $line;
+
+	/**
 	 * @return Response
 	 */
 	public function getResponse(): Response
@@ -55,9 +61,11 @@ class Part extends BaseEntity
 	/**
 	 * @param Response $response
 	 */
-	public function setResponse(Response $response): void
+	public function setResponse(Response $response): self
 	{
 		$this->response = $response;
+
+		return $this;
 	}
 
 	/**
@@ -71,9 +79,11 @@ class Part extends BaseEntity
 	/**
 	 * @param string $content
 	 */
-	public function setContent(string $content): void
+	public function setContent(string $content): self
 	{
 		$this->content = $content;
+
+		return $this;
 	}
 
 	/**
@@ -87,9 +97,11 @@ class Part extends BaseEntity
 	/**
 	 * @param Command|null $executeOnClick
 	 */
-	public function setExecuteOnClick(?Command $executeOnClick): void
+	public function setExecuteOnClick(?Command $executeOnClick): self
 	{
 		$this->executeOnClick = $executeOnClick;
+
+		return $this;
 	}
 
 	/**
@@ -103,9 +115,23 @@ class Part extends BaseEntity
 	/**
 	 * @param string $foregroundColor
 	 */
-	public function setForegroundColor(string $foregroundColor): void
+	public function setForegroundColor(string $foregroundColor): self
 	{
-		$this->foregroundColor = $foregroundColor;
+		$this->foregroundColor = ltrim($foregroundColor, '#');
+
+		return $this;
+	}
+
+	public function getLine(): ?Line
+	{
+		return $this->line;
+	}
+
+	public function setLine(?Line $line): self
+	{
+		$this->line = $line;
+
+		return $this;
 	}
 
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\GraphQL\Query;
+namespace App\GraphQL\Command;
 
 use App\Entity\Response;
 use Overblog\GraphQLBundle\Annotation as GQL;
@@ -11,7 +11,7 @@ use App\Entity\Command;
  * @package App\GraphQL
  * @GQL\Provider
  */
-class CommandProvider
+class ReadCommand
 {
 
 
@@ -30,7 +30,7 @@ class CommandProvider
     private function a() {
         $c = new Command();
         $c->setName('a');
-        $c->setResponse(new Response());
+        $c->addResponse(new Response());
 
         return $c;
     }
