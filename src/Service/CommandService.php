@@ -9,7 +9,13 @@ class CommandService extends BaseService
 
 	protected ?string $entityType = Command::class;
 
-	public function getCommandByName(string $name) {
+	public function getCommandById(int $id)
+	{
+		return $this->repository->find($id);
+	}
+
+	public function getCommandByName(string $name)
+	{
 		return $this->repository->findOneBy([
 			'name' => $name
 		]);

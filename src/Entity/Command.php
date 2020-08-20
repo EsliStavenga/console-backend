@@ -14,6 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Command extends BaseEntity implements ICommand
 {
+	public const DEFAULT_THUMBNAIL = 'default.jpg';
 
 	/**
 	 * @ORM\Column(type="string", length=255, unique=true)
@@ -22,15 +23,28 @@ class Command extends BaseEntity implements ICommand
 	private string $name;
 
 	/**
-	 * @var String[]
+	 * @ORM\Column(type="boolean", nullable=false)
+	 * @GQL\Field(type="Boolean!")
 	 */
-	private array $args;
+	private bool $showInGUI = false;
+
+	/**
+	 * @see ImageController::getCommandThumbnail
+	 *
+	 * @ORM\Column(type="string", nullable=true)
+	 */
+	private ?string $thumbnailFilename = null;
 
 	/**
 	 * @ORM\OneToMany(targetEntity=Response::class, mappedBy="command", orphanRemoval=true, cascade={"persist"})
 	 * @var Response[]
 	 */
 	private Collection $responses;
+
+	/**
+	 * @var String[]
+	 */
+	private array $args;
 
 	public function __construct()
 	{
@@ -89,4 +103,45 @@ class Command extends BaseEntity implements ICommand
 
 		return $this;
 	}
+
+	/**
+	 * @return bool
+	 */
+	public function showInGUI(): bool
+	{
+		return $this->showInGUI;
+	}
+
+	/**
+	 * @param bool $showInGUI
+	 */
+	public function setShowInGUI(bool $showInGUI): void
+	{
+		$this->showInGUI = $showInGUI;
+	}
+
+	/**
+	 * @return string|null
+	 */
+	public function getThumbnailFilename(): ?string
+	{
+		return $this->thumbnailFilename;
+	}
+
+	/**
+	 * @GQL\Field(type="String!", name="thumbnailPath")
+	 */
+	public function getThumbnailPath(): string
+	{
+		return sprintf('%s/%s', 'assets', $this->thumbnailFilename ?? self::DEFAULT_THUMBNAIL);
+	}
+
+	/**
+	 * @param string|null $thumbnailFilename
+	 */
+	public function setThumbnailFilename(?string $thumbnailFilename): void
+	{
+		$this->$thumbnailFilename = $thumbnailFilename;
+	}
+
 }
