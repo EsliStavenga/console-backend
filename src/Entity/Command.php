@@ -113,6 +113,16 @@ class Command extends BaseEntity implements ICommand
 	}
 
 	/**
+	 * Fucking hell graphql
+	 *
+	 * @return bool
+	 */
+	public function getShowInGUI(): bool
+	{
+		return $this->showInGUI();
+	}
+
+	/**
 	 * @param bool $showInGUI
 	 */
 	public function setShowInGUI(bool $showInGUI): void

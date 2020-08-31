@@ -35,7 +35,7 @@ class ExecuteCommand
 
 	/**
 	 *
-	 * @GQL\Query(type="Response", name="execute_command", args={
+	 * @GQL\Query(type="Response", name="executeCommand", args={
 	 *	  @GQL\Arg(name="command", type="String!", description="The command to execute"),
 	 *	  @GQL\Arg(name="arguments", type="[String]", description="The arguments for this command")
 	 *     })
@@ -47,6 +47,26 @@ class ExecuteCommand
 	public function executeCommand(string $command, ?array $args) {
 		/** @var Command|null $c */
 		$c = $this->commandService->getCommandByName($command);
+
+
+//		var_dump($c);
+//
+//
+//		$c = new Command();
+//		$c->setName('help');
+//		$c->setShowInGUI(false);
+//
+//		$response = new Response();
+//
+//		$line = new Line();
+//		$line->addPart((new Part())->setContent('projects')->setForegroundColor('108728')->setExecuteOnClick($this->em->getRepository(Command::class)->findOneBy(['name' => 'projects'])));
+//		$line->addPart((new Part())->setContent('An overview of projects'));
+//
+//		$response->addResponseLine($line);
+//
+//		$c->addResponse($response);
+//		$this->em->persist($c);
+//		$this->em->flush();
 
 		return (!empty($c) ? $c->getResponse()->setTitle($c->getName()) : null);
 
