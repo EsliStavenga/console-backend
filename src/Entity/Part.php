@@ -12,7 +12,7 @@ use App\Repository\PartRepository;
  * @ORM\Entity(repositoryClass=PartRepository::class)
  * @GQL\Type
  */
-class Part extends BaseEntity
+class Part extends Entity
 {
 
 	/**

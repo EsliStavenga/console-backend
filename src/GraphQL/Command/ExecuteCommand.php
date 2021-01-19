@@ -6,6 +6,7 @@ use App\Entity\Command;
 use App\Entity\Line;
 use App\Entity\Part;
 use App\Entity\Response;
+use App\Manager\CommandManager;
 use App\Service\CommandService;
 use Doctrine\ORM\EntityManagerInterface;
 use Overblog\GraphQLBundle\Annotation as GQL;
@@ -19,17 +20,17 @@ class ExecuteCommand
 {
 
 	/**
-	 * @var CommandService
+	 * @var CommandManager
 	 */
-	private CommandService $commandService;
+	private CommandManager $commandManager;
 	/**
 	 * @var EntityManagerInterface
 	 */
 	private EntityManagerInterface $em;
 
-	public function __construct(CommandService $commandService, EntityManagerInterface $em)
+	public function __construct(CommandManager $commandManager, EntityManagerInterface $em)
 	{
-		$this->commandService = $commandService;
+		$this->commandManager = $commandManager;
 		$this->em = $em;
 	}
 
@@ -46,29 +47,9 @@ class ExecuteCommand
 	 */
 	public function executeCommand(string $command, ?array $args) {
 		/** @var Command|null $c */
-		$c = $this->commandService->getCommandByName($command);
+		$c = $this->commandManager->getCommandByName($command);
 
-
-//		var_dump($c);
-//
-//
-//		$c = new Command();
-//		$c->setName('help');
-//		$c->setShowInGUI(false);
-//
-//		$response = new Response();
-//
-//		$line = new Line();
-//		$line->addPart((new Part())->setContent('projects')->setForegroundColor('108728')->setExecuteOnClick($this->em->getRepository(Command::class)->findOneBy(['name' => 'projects'])));
-//		$line->addPart((new Part())->setContent('An overview of projects'));
-//
-//		$response->addResponseLine($line);
-//
-//		$c->addResponse($response);
-//		$this->em->persist($c);
-//		$this->em->flush();
-
-		return (!empty($c) ? $c->getResponse()->setTitle($c->getName()) : null);
+		return (!empty($c) ? $c->getResponse($args ?? [])->setTitle($c->getName()) : null);
 
 	}
 

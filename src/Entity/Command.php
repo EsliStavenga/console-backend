@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Commands\ICommand;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Overblog\GraphQLBundle\Annotation as GQL;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=CommandRepository::class)
  * @GQL\Type
  */
-class Command extends BaseEntity implements ICommand
+class Command extends Entity implements ICommand
 {
 	public const DEFAULT_THUMBNAIL = 'default.jpg';
 
@@ -20,31 +21,37 @@ class Command extends BaseEntity implements ICommand
 	 * @ORM\Column(type="string", length=255, unique=true)
 	 * @GQL\Field(type="String!")
 	 */
-	private string $name;
+	protected string $name;
 
 	/**
 	 * @ORM\Column(type="boolean", nullable=false)
 	 * @GQL\Field(type="Boolean!")
 	 */
-	private bool $showInGUI = false;
+	protected bool $showInGUI = false;
 
 	/**
 	 * @see ImageController::getCommandThumbnail
 	 *
 	 * @ORM\Column(type="string", nullable=true)
 	 */
-	private ?string $thumbnailFilename = null;
+	protected ?string $thumbnailFilename = null;
 
 	/**
 	 * @ORM\OneToMany(targetEntity=Response::class, mappedBy="command", orphanRemoval=true, cascade={"persist"})
 	 * @var Response[]
 	 */
-	private Collection $responses;
+	protected Collection $responses;
+
+	/**
+	 * @ORM\Column(type="string", nullable=false)
+	 * @var string
+	 */
+	protected string $description;
 
 	/**
 	 * @var String[]
 	 */
-	private array $args;
+	protected array $args;
 
 	public function __construct()
 	{
@@ -63,7 +70,7 @@ class Command extends BaseEntity implements ICommand
 		return $this;
 	}
 
-	public function getResponse(): Response
+	public function getResponse(array $args): Response
 	{
 		return $this->responses->get(0);
 	}
@@ -152,6 +159,23 @@ class Command extends BaseEntity implements ICommand
 	public function setThumbnailFilename(?string $thumbnailFilename): void
 	{
 		$this->$thumbnailFilename = $thumbnailFilename;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getDescription(): string
+	{
+		return $this->description;
+	}
+
+	/**
+	 * @param string $description
+	 */
+	public function setDescription(string $description): self
+	{
+		$this->description = $description;
+		return $this;
 	}
 
 }

@@ -12,7 +12,7 @@ use Overblog\GraphQLBundle\Annotation as GQL;
  * @ORM\Entity(repositoryClass=LineRepository::class)
  * @GQL\Type
  */
-class Line extends BaseEntity
+class Line extends Entity
 {
     /**
      * @ORM\OneToMany(targetEntity=Part::class, mappedBy="line", orphanRemoval=true, cascade={"persist"})

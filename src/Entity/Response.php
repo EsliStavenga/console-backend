@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=ResponseRepository::class)
  * @GQL\Type
  */
-class Response extends BaseEntity
+class Response extends Entity
 {
     /**
      * @ORM\ManyToOne(targetEntity=Command::class, inversedBy="responses")

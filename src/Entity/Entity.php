@@ -5,7 +5,7 @@ namespace App\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
-abstract class BaseEntity
+abstract class Entity
 {
 
     /**
